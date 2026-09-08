@@ -1,0 +1,68 @@
+<div class="blob tl"></div>
+<div class="blob br"></div>
+<div class="speckles tl">
+  <span></span><span></span><span></span>
+</div>
+<div class="speckles br">
+  <span></span><span></span><span></span>
+</div>
+
+<header class="brand">
+  <svg class="paw" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="14" cy="14" r="5" stroke="#20223B" stroke-width="2"/>
+    <circle cx="27" cy="10" r="5" stroke="#20223B" stroke-width="2"/>
+    <circle cx="39" cy="16" r="5" stroke="#20223B" stroke-width="2"/>
+    <path d="M17 27c0-6 5-9 10-9s10 3 10 9-4 12-10 12-10-6-10-12z" stroke="#20223B" stroke-width="2"/>
+  </svg>
+  <div class="brand-name">CLÍNICA<br>HUELLITAS</div>
+</header>
+
+<section class="view active">
+  <a class="back-link" routerLink="/">← Volver al inicio</a>
+  <div class="wrap">
+    <div class="auth-grid">
+      <div>
+        <h1 class="page-title">LOGIN</h1>
+        <div class="auth-illustration">
+          <img src="IMAGEN_LOGIN.png" alt="Login Clínica Huellitas" class="illustration-img">
+        </div>
+      </div>
+      <div class="form-col">
+        <h2>¡Bienvenido de nuevo!</h2>
+        <div class="form-sub">¿Nuevo usuario? <a class="link" routerLink="/signup">Únete ahora</a></div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          <input
+            class="field"
+            [class.field-error]="f.username.invalid && f.username.touched"
+            formControlName="username"
+            type="text"
+            placeholder="USUARIO"
+            autocomplete="username"
+          >
+          <div class="error-msg">
+            {{ f.username.invalid && f.username.touched ? 'Ingresa tu usuario' : '' }}
+          </div>
+
+          <input
+            class="field"
+            [class.field-error]="f.password.invalid && f.password.touched"
+            formControlName="password"
+            type="password"
+            placeholder="CONTRASEÑA"
+            autocomplete="current-password"
+          >
+          <div class="error-msg">
+            {{ f.password.invalid && f.password.touched ? 'Ingresa tu contraseña' : '' }}
+          </div>
+
+          <span class="link forgot">¿Has olvidado tu contraseña?</span>
+
+          <button type="submit" class="submit-btn" [disabled]="loading">
+            {{ loading ? 'CARGANDO…' : 'CONTINUAR' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
