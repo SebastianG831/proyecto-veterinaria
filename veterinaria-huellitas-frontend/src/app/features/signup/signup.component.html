@@ -1,5 +1,5 @@
-<div class="blob tl"></div>
-<div class="blob br"></div>
+<img class="corner-blob tl" src="images/blob-tl.png" alt="">
+<img class="corner-blob br on-top" src="images/blob-br.png" alt="">
 <div class="speckles tl">
   <span></span><span></span><span></span>
 </div>
@@ -21,13 +21,8 @@
   <a class="back-link" routerLink="/">← Volver al inicio</a>
   <div class="wrap">
     <div class="auth-grid">
-      <div>
-        <h1 class="page-title">SIGN UP</h1>
-        <div class="auth-illustration">
-          <img src="IMAGEN_SIGNUP.png" alt="Sign up Clínica Huellitas" class="illustration-img">
-        </div>
-      </div>
       <div class="form-col">
+        <h1 class="page-title">SIGN UP</h1>
         <h2>Crear una cuenta</h2>
         <div class="form-sub">¿Ya tienes una cuenta? <a class="link" routerLink="/login">Conectarse</a></div>
 
@@ -89,6 +84,9 @@
             {{ loading ? 'CARGANDO…' : 'REGISTRARSE' }}
           </button>
         </form>
+      </div>
+      <div class="auth-illustration">
+        <img src="images/3.1.png" alt="Sign up Clínica Huellitas" class="illustration-img">
       </div>
     </div>
   </div>
