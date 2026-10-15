@@ -2,21 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// El usuario inicia sesión con su correo (ya no existe "username")
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface RegistroRequest {
-  username: string;
-  password: string;
-  email: string;
   nombreCompleto: string;
+  email: string;
+  password: string;
 }
 
 export interface AuthResponse {
   token: string;
-  username: string;
+  email: string;
+  nombreCompleto: string;
   rol: string;
 }
 
@@ -41,7 +42,8 @@ export class AuthService {
 
   saveSession(auth: AuthResponse): void {
     localStorage.setItem('token', auth.token);
-    localStorage.setItem('username', auth.username);
+    localStorage.setItem('email', auth.email);
+    localStorage.setItem('nombreCompleto', auth.nombreCompleto);
     localStorage.setItem('rol', auth.rol);
   }
 
@@ -51,7 +53,8 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
-    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem('nombreCompleto');
     localStorage.removeItem('rol');
   }
 }

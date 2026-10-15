@@ -31,9 +31,10 @@ public class UsuarioDetailsImpl implements UserDetails {
         return usuario.getPassword();
     }
 
+    // Para Spring Security el "username" de este sistema es el correo del usuario
     @Override
     public String getUsername() {
-        return usuario.getUsername();
+        return usuario.getEmail();
     }
 
     @Override

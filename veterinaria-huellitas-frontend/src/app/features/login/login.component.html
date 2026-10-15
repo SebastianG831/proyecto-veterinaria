@@ -29,14 +29,14 @@
         <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
           <input
             class="field"
-            [class.field-error]="f.username.invalid && f.username.touched"
-            formControlName="username"
-            type="text"
-            placeholder="USUARIO"
-            autocomplete="username"
+            [class.field-error]="f.email.invalid && f.email.touched"
+            formControlName="email"
+            type="email"
+            placeholder="CORREO ELECTRÓNICO"
+            autocomplete="email"
           >
           <div class="error-msg">
-            {{ f.username.invalid && f.username.touched ? 'Ingresa tu usuario' : '' }}
+            {{ f.email.invalid && f.email.touched ? 'Ingresa un correo válido' : '' }}
           </div>
 
           <input

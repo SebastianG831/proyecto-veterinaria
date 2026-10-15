@@ -41,26 +41,14 @@
 
           <input
             class="field"
-            [class.field-error]="f.username.invalid && f.username.touched"
-            formControlName="username"
-            type="text"
-            placeholder="USUARIO"
-            autocomplete="username"
-          >
-          <div class="error-msg">
-            {{ f.username.invalid && f.username.touched ? 'El usuario debe tener al menos 4 caracteres' : '' }}
-          </div>
-
-          <input
-            class="field"
             [class.field-error]="f.email.invalid && f.email.touched"
             formControlName="email"
             type="email"
-            placeholder="EMAIL"
+            placeholder="CORREO ELECTRÓNICO"
             autocomplete="email"
           >
           <div class="error-msg">
-            {{ f.email.invalid && f.email.touched ? 'Ingresa un email válido' : '' }}
+            {{ f.email.invalid && f.email.touched ? 'Ingresa un correo válido' : '' }}
           </div>
 
           <input

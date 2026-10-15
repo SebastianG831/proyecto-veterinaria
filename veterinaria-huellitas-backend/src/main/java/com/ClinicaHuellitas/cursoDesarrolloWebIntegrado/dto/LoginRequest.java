@@ -1,28 +1,18 @@
 package com.ClinicaHuellitas.cursoDesarrolloWebIntegrado.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginRequest {
+/**
+ * Datos para iniciar sesión: el usuario ingresa con su correo y contraseña.
+ */
+public record LoginRequest(
 
-    @NotBlank(message = "El username es obligatorio")
-    private String username;
+        @NotBlank(message = "El correo es obligatorio")
+        @Email(message = "El correo no tiene un formato válido")
+        String email,
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    private String password;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+        @NotBlank(message = "La contraseña es obligatoria")
+        String password
+) {
 }

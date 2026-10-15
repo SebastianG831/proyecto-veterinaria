@@ -19,7 +19,7 @@ export class LoginComponent {
   loading = false;
 
   form = this.fb.group({
-    username: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
 
@@ -34,12 +34,12 @@ export class LoginComponent {
     }
 
     this.loading = true;
-    const { username, password } = this.form.getRawValue();
+    const { email, password } = this.form.getRawValue();
 
-    this.auth.login({ username: username!, password: password! }).subscribe({
+    this.auth.login({ email: email!, password: password! }).subscribe({
       next: (data) => {
         this.auth.saveSession(data);
-        this.toast.show(`¡Bienvenido, ${data.username}!`);
+        this.toast.show(`¡Bienvenido, ${data.nombreCompleto}!`);
         this.loading = false;
         // Aquí puedes redirigir cuando tengas la siguiente pantalla, ej:
         // this.router.navigate(['/dashboard']);
@@ -47,7 +47,7 @@ export class LoginComponent {
       error: (err) => {
         this.loading = false;
         if (err.status === 401 || err.status === 403) {
-          this.toast.show('Usuario o contraseña incorrectos');
+          this.toast.show('Correo o contraseña incorrectos');
         } else {
           this.toast.show(err.error?.mensaje || 'No se pudo iniciar sesión');
         }

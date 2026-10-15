@@ -1,10 +1,12 @@
 package com.ClinicaHuellitas.cursoDesarrolloWebIntegrado.security;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -73,14 +77,34 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                // Panel administrativo: solo ADMIN (usuarios y supervisión de reservas)
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/servicios/**", "/api/reservas/**")
-                .hasAnyRole("ADMIN", "CLIENTE")
+                // Servicios: consultar pueden ADMIN y CLIENTE; crear, editar y eliminar solo ADMIN
+                .requestMatchers(HttpMethod.GET, "/api/servicios/**").hasAnyRole("ADMIN", "CLIENTE")
+                .requestMatchers("/api/servicios/**").hasRole("ADMIN")
+                // Reservas: cancelar pueden ADMIN y CLIENTE (el service revisa que sea suya);
+                // crear y ver el historial son del CLIENTE
+                .requestMatchers(HttpMethod.PUT, "/api/reservas/*/cancelar").hasAnyRole("ADMIN", "CLIENTE")
+                .requestMatchers("/api/reservas/**").hasRole("CLIENTE")
                 .anyRequest().authenticated()
+            )
+            // Respuestas JSON claras cuando falta el token (401) o no hay permisos (403)
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, e) ->
+                        escribirError(response, 401, "Debes iniciar sesión para acceder a este recurso"))
+                .accessDeniedHandler((request, response, e) ->
+                        escribirError(response, 403, "No tienes permisos para realizar esta acción"))
             )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // Escribe una respuesta de error en el mismo formato del resto de la API: { "mensaje": "..." }
+    private static void escribirError(HttpServletResponse response, int status, String mensaje) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"mensaje\":\"" + mensaje + "\"}");
     }
 }

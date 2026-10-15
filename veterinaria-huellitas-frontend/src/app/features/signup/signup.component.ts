@@ -21,7 +21,6 @@ export class SignupComponent {
 
   form = this.fb.group({
     nombreCompleto: ['', Validators.required],
-    username: ['', [Validators.required, Validators.minLength(4)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     terms: [false, Validators.requiredTrue],
@@ -41,12 +40,11 @@ export class SignupComponent {
     }
 
     this.loading = true;
-    const { nombreCompleto, username, email, password } = this.form.getRawValue();
+    const { nombreCompleto, email, password } = this.form.getRawValue();
 
     this.auth
       .registro({
         nombreCompleto: nombreCompleto!,
-        username: username!,
         email: email!,
         password: password!,
       })
