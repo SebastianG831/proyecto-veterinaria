@@ -1,0 +1,47 @@
+<div class="card hero">
+  <div class="hero-text">
+    <h1>¡Hola, {{ nombre }}!</h1>
+    <p>Bienvenido a Clínica Huellitas. Aquí puedes reservar citas para tus mascotas y revisar su historial.</p>
+    <a class="pill-btn" routerLink="/cliente/reservar">RESERVAR UNA CITA</a>
+  </div>
+  <img class="hero-img" src="images/1.1.png" alt="Clínica Huellitas">
+</div>
+
+<div class="stat-grid">
+  <div class="card stat info">
+    <span class="stat-num">{{ proximas().length }}</span>
+    <span class="stat-label">Próximas citas</span>
+  </div>
+  <div class="card stat ok">
+    <span class="stat-num">{{ atendidas() }}</span>
+    <span class="stat-label">Citas atendidas</span>
+  </div>
+  <div class="card stat">
+    <span class="stat-num">{{ mascotas() }}</span>
+    <span class="stat-label">Mis mascotas</span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Tu próxima cita</h2>
+  @if (cargando()) {
+    <p class="muted">Cargando…</p>
+  } @else if (proxima(); as r) {
+    <div class="next">
+      <div class="next-date">
+        <strong>{{ fecha(r.fechaHora) }}</strong>
+        <span>{{ hora(r.fechaHora) }} – {{ hora(r.fechaHoraFin) }}</span>
+      </div>
+      <div>
+        <div><strong>{{ r.nombreMascota }}</strong> · {{ r.servicioNombre }}</div>
+        <span class="badge CONFIRMADA">Confirmada</span>
+      </div>
+      <a class="pill-btn sm ghost" routerLink="/cliente/citas">Ver mis citas</a>
+    </div>
+  } @else {
+    <div class="empty">
+      <p>Aún no tienes citas próximas.</p>
+      <a class="pill-btn sm" routerLink="/cliente/reservar">Reservar ahora</a>
+    </div>
+  }
+</div>

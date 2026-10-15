@@ -28,11 +28,14 @@ import com.ClinicaHuellitas.cursoDesarrolloWebIntegrado.repository.UsuarioReposi
  *   2. la fecha y hora son futuras,
  *   3. está dentro del horario de atención (lunes a sábado, 9:00 a 21:00),
  *   4. no se cruza con otra reserva confirmada del mismo servicio.
- * El administrador solo supervisa: ve todas las reservas, puede cancelarlas
- * y marcarlas como atendidas.
+ * El administrador solo supervisa: ve todas las reservas y las marca como atendidas.
+ * NO puede cancelarlas: solo el cliente, con 24 horas de anticipación.
  */
 @Service
 public class ReservaService {
+
+    // Anticipación mínima (en horas) para que el cliente pueda cancelar su reserva
+    private static final long HORAS_MINIMAS_PARA_CANCELAR = 24;
 
     private final ReservaRepository reservaRepository;
     private final ServicioRepository servicioRepository;
@@ -101,18 +104,26 @@ public class ReservaService {
                 .toList();
     }
 
+    /**
+     * Cancela una reserva. Reglas:
+     *   - Solo el CLIENTE dueño de la reserva puede cancelarla (el administrador NO puede).
+     *   - Debe hacerse con al menos 24 horas de anticipación a la hora programada.
+     *   - Solo se pueden cancelar reservas CONFIRMADAS.
+     */
     @Transactional
-    public ReservaResponse cancelar(Long id, String emailSolicitante, boolean esAdmin) {
+    public ReservaResponse cancelar(Long id, String emailSolicitante) {
         Reserva reserva = buscarReserva(id);
 
-        if (!esAdmin && !reserva.getUsuario().getEmail().equals(emailSolicitante)) {
+        if (!reserva.getUsuario().getEmail().equals(emailSolicitante)) {
             throw new ApiException(HttpStatus.FORBIDDEN, "No puedes cancelar la reserva de otro cliente");
         }
         if (reserva.getEstado() != EstadoReserva.CONFIRMADA) {
             throw new ApiException(HttpStatus.CONFLICT, "Solo se pueden cancelar reservas confirmadas");
         }
-        if (!esAdmin && !reserva.getFechaHora().isAfter(ahora())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "No puedes cancelar una reserva que ya comenzó o pasó");
+        if (ahora().isAfter(reserva.getFechaHora().minusHours(HORAS_MINIMAS_PARA_CANCELAR))) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "Solo puedes cancelar una reserva con al menos " + HORAS_MINIMAS_PARA_CANCELAR
+                            + " horas de anticipación");
         }
 
         reserva.setEstado(EstadoReserva.CANCELADA);

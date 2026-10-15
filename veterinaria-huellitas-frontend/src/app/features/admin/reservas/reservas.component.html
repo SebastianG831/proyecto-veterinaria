@@ -1,0 +1,45 @@
+<div class="page-head">
+  <h1>Reservas</h1>
+  <p>Las reservas se confirman solas. Aquí las supervisas y marcas como atendidas.</p>
+</div>
+
+<div class="chips">
+  @for (f of filtros; track f.valor) {
+    <button type="button" class="chip" [class.active]="filtro() === f.valor" (click)="elegir(f.valor)">{{ f.texto }}</button>
+  }
+</div>
+
+<div class="card">
+  @if (cargando()) {
+    <p class="muted">Cargando…</p>
+  } @else if (reservas().length === 0) {
+    <div class="empty"><img src="images/1.2.png" alt=""><p>No hay reservas para mostrar.</p></div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Mascota</th><th>Servicio</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (r of reservas(); track r.id) {
+            <tr>
+              <td>{{ fecha(r.fechaHora) }}</td>
+              <td>{{ hora(r.fechaHora) }} – {{ hora(r.fechaHoraFin) }}</td>
+              <td>{{ r.clienteNombre }}<div class="muted">{{ r.clienteEmail }}</div></td>
+              <td><strong>{{ r.nombreMascota }}</strong>@if (r.observaciones) { <div class="muted">{{ r.observaciones }}</div> }</td>
+              <td>{{ r.servicioNombre }}</td>
+              <td><span [class]="'badge ' + r.estado">{{ r.estado }}</span></td>
+              <td class="actions">
+                @if (r.estado === 'CONFIRMADA') {
+                  <button type="button" class="pill-btn sm ok" [disabled]="procesando() === r.id" (click)="marcarAtendida(r)">
+                    MARCAR ATENDIDA
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

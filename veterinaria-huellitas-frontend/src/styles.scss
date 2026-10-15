@@ -28,7 +28,7 @@
      + app-home/app-login/app-signup). Those hosts aren't part of the flex chain above,
      which breaks the header/wrap vertical centering. display:contents removes them from
      the box tree so header.brand and .view become real flex children of body. */
-  app-root, app-home, app-login, app-signup, router-outlet{
+  app-root, app-home, app-login, app-signup, app-shell, router-outlet{
     display:contents;
   }
 

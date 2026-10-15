@@ -1,0 +1,28 @@
+<div class="page-head row">
+  <div>
+    <h1>Servicios</h1>
+    <p>Todo lo que Clínica Huellitas tiene para el cuidado de tu mascota.</p>
+  </div>
+  <input class="f-field buscar" type="search" placeholder="Buscar servicio…" [value]="busqueda()"
+         (input)="busqueda.set($any($event.target).value)">
+</div>
+
+@if (cargando()) {
+  <p class="muted">Cargando…</p>
+} @else if (visibles().length === 0) {
+  <div class="card empty"><img src="images/1.2.png" alt=""><p>No encontramos servicios.</p></div>
+} @else {
+  <div class="grid-cards">
+    @for (s of visibles(); track s.id) {
+      <div class="card servicio">
+        <h3>{{ s.nombre }}</h3>
+        <p class="desc">{{ s.descripcion || 'Consulta con nuestro equipo para más detalles.' }}</p>
+        <div class="meta">
+          <span class="precio">S/ {{ s.precio }}</span>
+          <span class="muted">{{ s.duracionMinutos }} min</span>
+        </div>
+        <button type="button" class="pill-btn sm" (click)="reservar(s)">RESERVAR</button>
+      </div>
+    }
+  </div>
+}

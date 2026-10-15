@@ -1,0 +1,88 @@
+<div class="page-head">
+  <h1>Panel de administración</h1>
+  <p>Resumen de la actividad de Clínica Huellitas.</p>
+</div>
+
+@if (cargando()) {
+  <p class="muted">Cargando…</p>
+} @else {
+  <div class="stat-grid">
+    <div class="card stat"><span class="stat-num">{{ total() }}</span><span class="stat-label">Citas en total</span></div>
+    <div class="card stat info"><span class="stat-num">{{ pendientes() }}</span><span class="stat-label">Pendientes</span></div>
+    <div class="card stat ok"><span class="stat-num">{{ realizadas() }}</span><span class="stat-label">Realizadas</span></div>
+    <div class="card stat bad"><span class="stat-num">{{ canceladas() }}</span><span class="stat-label">Canceladas</span></div>
+    <div class="card stat"><span class="stat-num">{{ clientes() }}</span><span class="stat-label">Clientes</span></div>
+    <div class="card stat"><span class="stat-num">{{ servicios().length }}</span><span class="stat-label">Servicios activos</span></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Citas por estado</h2>
+      <div class="donut-box">
+        <svg viewBox="0 0 180 180" class="donut" role="img" aria-label="Citas por estado">
+          <circle cx="90" cy="90" r="70" fill="none" stroke="#E8EDFA" stroke-width="26"/>
+          @if (total() > 0) {
+            @for (s of segmentos(); track s.etiqueta) {
+              <circle cx="90" cy="90" r="70" fill="none" [attr.stroke]="s.color" stroke-width="26"
+                      [attr.stroke-dasharray]="s.largo + ' ' + (circunferencia - s.largo)"
+                      [attr.stroke-dashoffset]="s.desfase" transform="rotate(-90 90 90)"/>
+            }
+          }
+          <text x="90" y="88" text-anchor="middle" class="donut-num">{{ total() }}</text>
+          <text x="90" y="108" text-anchor="middle" class="donut-lbl">citas</text>
+        </svg>
+        <ul class="leyenda">
+          @for (s of segmentos(); track s.etiqueta) {
+            <li><span class="dot" [style.background]="s.color"></span>{{ s.etiqueta }}<strong>{{ s.valor }}</strong></li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Citas por mes</h2>
+      <div class="barras">
+        @for (m of meses(); track $index) {
+          <div class="barra-col">
+            <span class="barra-val">{{ m.valor }}</span>
+            <div class="barra-track"><div class="barra" [style.height.%]="m.alto"></div></div>
+            <span class="barra-lbl">{{ m.etiqueta }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Servicios más reservados</h2>
+      @if (topServicios().length === 0) {
+        <p class="muted">Aún no hay reservas.</p>
+      } @else {
+        @for (s of topServicios(); track s.nombre) {
+          <div class="hbar">
+            <div class="hbar-top"><span>{{ s.nombre }}</span><strong>{{ s.valor }}</strong></div>
+            <div class="hbar-track"><div class="hbar-fill" [style.width.%]="s.ancho"></div></div>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="card">
+      <h2>Próximas citas</h2>
+      @if (proximas().length === 0) {
+        <div class="empty"><img src="images/1.2.png" alt=""><p>No hay citas próximas.</p></div>
+      } @else {
+        <ul class="proximas">
+          @for (r of proximas(); track r.id) {
+            <li>
+              <div class="p-fecha"><strong>{{ fecha(r.fechaHora) }}</strong><span>{{ hora(r.fechaHora) }}</span></div>
+              <div class="p-info"><strong>{{ r.nombreMascota }}</strong> · {{ r.servicioNombre }}<div class="muted">{{ r.clienteNombre }}</div></div>
+            </li>
+          }
+        </ul>
+        <a class="pill-btn sm ghost" routerLink="/admin/reservas">Ver todas las reservas</a>
+      }
+    </div>
+  </div>
+}

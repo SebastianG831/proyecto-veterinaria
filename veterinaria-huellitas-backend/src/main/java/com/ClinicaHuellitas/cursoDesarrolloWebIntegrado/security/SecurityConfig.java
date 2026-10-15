@@ -82,9 +82,8 @@ public class SecurityConfig {
                 // Servicios: consultar pueden ADMIN y CLIENTE; crear, editar y eliminar solo ADMIN
                 .requestMatchers(HttpMethod.GET, "/api/servicios/**").hasAnyRole("ADMIN", "CLIENTE")
                 .requestMatchers("/api/servicios/**").hasRole("ADMIN")
-                // Reservas: cancelar pueden ADMIN y CLIENTE (el service revisa que sea suya);
-                // crear y ver el historial son del CLIENTE
-                .requestMatchers(HttpMethod.PUT, "/api/reservas/*/cancelar").hasAnyRole("ADMIN", "CLIENTE")
+                // Reservas: crear, ver el historial y cancelar son solo del CLIENTE
+                // (el administrador no puede cancelar reservas)
                 .requestMatchers("/api/reservas/**").hasRole("CLIENTE")
                 .anyRequest().authenticated()
             )

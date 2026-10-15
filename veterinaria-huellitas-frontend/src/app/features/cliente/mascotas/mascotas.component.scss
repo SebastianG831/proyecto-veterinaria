@@ -1,0 +1,7 @@
+:host { display: block; }
+.pet-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.pet-head h3 { margin: 0; font-family: 'Fraunces', serif; font-weight: 400; font-size: 24px; }
+.pet-avatar { width: 48px; height: 48px; padding: 9px; border-radius: 50%; background: var(--btn); color: var(--btn-text); }
+dl { margin: 0 0 16px; font-size: 13px; }
+dt { color: var(--ink-soft); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-top: 10px; }
+dd { margin: 2px 0 0; font-weight: 500; }

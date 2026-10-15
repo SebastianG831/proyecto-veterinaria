@@ -1,0 +1,46 @@
+<div class="page-head row">
+  <div>
+    <h1>Mis mascotas</h1>
+    <p>Las mascotas que han pasado por Clínica Huellitas con tus reservas.</p>
+  </div>
+  <a class="pill-btn sm" routerLink="/cliente/reservar">+ NUEVA CITA</a>
+</div>
+
+@if (cargando()) {
+  <p class="muted">Cargando…</p>
+} @else if (mascotas().length === 0) {
+  <div class="card empty">
+    <img src="images/1.2.png" alt="">
+    <p>Todavía no tienes mascotas registradas. Aparecerán aquí cuando reserves tu primera cita.</p>
+    <a class="pill-btn sm" routerLink="/cliente/reservar">Reservar cita</a>
+  </div>
+} @else {
+  <div class="grid-cards">
+    @for (m of mascotas(); track m.nombre) {
+      <div class="card pet">
+        <div class="pet-head">
+          <div class="pet-avatar">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="14" cy="14" r="5" stroke="currentColor" stroke-width="2"/>
+              <circle cx="27" cy="10" r="5" stroke="currentColor" stroke-width="2"/>
+              <circle cx="39" cy="16" r="5" stroke="currentColor" stroke-width="2"/>
+              <path d="M17 27c0-6 5-9 10-9s10 3 10 9-4 12-10 12-10-6-10-12z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>{{ m.nombre }}</h3>
+        </div>
+        <dl>
+          <dt>Visitas atendidas</dt><dd>{{ m.visitas }}</dd>
+          <dt>Último servicio</dt>
+          <dd>{{ m.ultimoServicio }}@if (m.ultimaVisita) { <span class="muted"> · {{ fecha(m.ultimaVisita) }}</span> }</dd>
+          <dt>Próxima cita</dt>
+          <dd>
+            @if (m.proxima) { {{ fecha(m.proxima.fechaHora) }} · {{ hora(m.proxima.fechaHora) }} }
+            @else { <span class="muted">Sin cita programada</span> }
+          </dd>
+        </dl>
+        <button class="pill-btn sm" type="button" (click)="reservarPara(m)">RESERVAR CITA</button>
+      </div>
+    }
+  </div>
+}

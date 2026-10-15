@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 
@@ -15,6 +15,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private toast = inject(ToastService);
+  private router = inject(Router);
 
   loading = false;
 
@@ -41,8 +42,8 @@ export class LoginComponent {
         this.auth.saveSession(data);
         this.toast.show(`¡Bienvenido, ${data.nombreCompleto}!`);
         this.loading = false;
-        // Aquí puedes redirigir cuando tengas la siguiente pantalla, ej:
-        // this.router.navigate(['/dashboard']);
+        // Cada rol entra a su propio panel (con el menú lateral)
+        this.router.navigate([this.auth.homePath()]);
       },
       error: (err) => {
         this.loading = false;

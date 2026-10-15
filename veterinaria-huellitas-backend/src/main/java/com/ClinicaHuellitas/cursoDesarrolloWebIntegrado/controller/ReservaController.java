@@ -20,7 +20,7 @@ import com.ClinicaHuellitas.cursoDesarrolloWebIntegrado.service.ReservaService;
 import jakarta.validation.Valid;
 
 /**
- * Reservas del cliente: crear (se confirma sola), ver su historial y cancelar.
+ * Reservas del cliente: crear (se confirma sola), ver su historial y cancelar (con 24 h de anticipación).
  * "Authentication" trae al usuario que inició sesión; su nombre (getName) es el correo.
  */
 @RestController
@@ -47,8 +47,6 @@ public class ReservaController {
 
     @PutMapping("/{id}/cancelar")
     public ReservaResponse cancelar(@PathVariable Long id, Authentication authentication) {
-        boolean esAdmin = authentication.getAuthorities().stream()
-                .anyMatch(autoridad -> autoridad.getAuthority().equals("ROLE_ADMIN"));
-        return reservaService.cancelar(id, authentication.getName(), esAdmin);
+        return reservaService.cancelar(id, authentication.getName());
     }
 }

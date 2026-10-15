@@ -50,7 +50,7 @@ La inyección de dependencias se hace **por constructor** en controllers y servi
   debe terminar antes del cierre (hora de fin = hora de inicio + duración del servicio).
   El horario se cambia en `application.properties` (`huellitas.horario.apertura` / `cierre`).
 - No puede cruzarse con otra reserva `CONFIRMADA` del mismo servicio.
-- El cliente cancela solo sus reservas y antes de que comiencen; el administrador puede cancelar cualquiera.
+- Solo el cliente puede cancelar sus reservas, con al menos 24 horas de anticipación a la hora programada; el administrador NO puede cancelar reservas.
 - Estados: `CONFIRMADA` → `CANCELADA` o `ATENDIDA`.
 - "Eliminar" un servicio lo **desactiva** (baja lógica) para no perder el historial de reservas.
 
@@ -70,7 +70,7 @@ Todos devuelven JSON. Excepto `/api/auth/**`, requieren el header `Authorization
 | DELETE | `/api/servicios/{id}` | ADMIN | Desactiva un servicio |
 | POST | `/api/reservas` | CLIENTE | Crea una reserva (queda confirmada) |
 | GET | `/api/reservas/mis-reservas` | CLIENTE | Historial del cliente |
-| PUT | `/api/reservas/{id}/cancelar` | CLIENTE, ADMIN | Cancela una reserva |
+| PUT | `/api/reservas/{id}/cancelar` | CLIENTE | Cancela una reserva propia (mínimo 24 h antes) |
 | GET | `/api/admin/reservas?estado=` | ADMIN | Todas las reservas (filtro opcional por estado) |
 | PUT | `/api/admin/reservas/{id}/atendida` | ADMIN | Marca una reserva como atendida |
 | GET | `/api/admin/usuarios` | ADMIN | Lista los usuarios |

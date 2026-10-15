@@ -1,0 +1,71 @@
+<div class="page-head">
+  <h1>Reservar cita</h1>
+  <p>Tu cita se confirma al instante si el horario está disponible.</p>
+</div>
+
+<div class="reservar-grid">
+  <form class="card" [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+    <div class="form-grid">
+      <div class="full">
+        <label class="f-label" for="servicio">SERVICIO</label>
+        <select id="servicio" class="f-field" formControlName="servicioId"
+                [class.invalid]="f.servicioId.invalid && f.servicioId.touched">
+          <option [ngValue]="null" disabled>Elige un servicio</option>
+          @for (s of servicios(); track s.id) {
+            <option [ngValue]="s.id">{{ s.nombre }} — S/ {{ s.precio }} · {{ s.duracionMinutos }} min</option>
+          }
+        </select>
+        <div class="f-error">{{ f.servicioId.invalid && f.servicioId.touched ? 'Elige un servicio' : '' }}</div>
+      </div>
+
+      <div>
+        <label class="f-label" for="mascota">NOMBRE DE TU MASCOTA</label>
+        <input id="mascota" class="f-field" formControlName="nombreMascota" list="mascotas" placeholder="Ej. Max"
+               [class.invalid]="f.nombreMascota.invalid && f.nombreMascota.touched">
+        <datalist id="mascotas">
+          @for (m of mascotasConocidas(); track m) { <option [value]="m"></option> }
+        </datalist>
+        <div class="f-error">{{ f.nombreMascota.invalid && f.nombreMascota.touched ? 'Ingresa el nombre de tu mascota' : '' }}</div>
+      </div>
+
+      <div>
+        <label class="f-label" for="fecha">FECHA Y HORA</label>
+        <input id="fecha" class="f-field" type="datetime-local" formControlName="fechaHora" [min]="minFecha" step="900"
+               [class.invalid]="f.fechaHora.invalid && f.fechaHora.touched">
+        <div class="f-error">{{ f.fechaHora.invalid && f.fechaHora.touched ? 'Elige fecha y hora' : '' }}</div>
+      </div>
+
+      <div class="full">
+        <label class="f-label" for="obs">OBSERVACIONES (OPCIONAL)</label>
+        <textarea id="obs" class="f-field" formControlName="observaciones" maxlength="500"
+                  placeholder="Cuéntanos algo importante sobre tu mascota"></textarea>
+      </div>
+    </div>
+
+    @if (errorServidor()) {
+      <div class="server-error">{{ errorServidor() }}</div>
+    }
+
+    <button type="submit" class="pill-btn" [disabled]="enviando()">
+      {{ enviando() ? 'RESERVANDO…' : 'CONFIRMAR RESERVA' }}
+    </button>
+  </form>
+
+  <aside class="card info">
+    <img src="images/2.1.png" alt="">
+    <h2>Antes de reservar</h2>
+    <ul>
+      <li>Atendemos de <strong>lunes a sábado</strong>, de 9:00 a 21:00.</li>
+      <li>El servicio debe terminar antes del cierre.</li>
+      <li>La fecha debe ser futura.</li>
+      <li>Si el horario se cruza con otra reserva del mismo servicio, te avisaremos para que elijas otro.</li>
+      <li>Podrás cancelar hasta <strong>24 horas antes</strong> de tu cita.</li>
+    </ul>
+    @if (servicioElegido; as s) {
+      <div class="elegido">
+        <strong>{{ s.nombre }}</strong>
+        <span>{{ s.duracionMinutos }} min · S/ {{ s.precio }}</span>
+      </div>
+    }
+  </aside>
+</div>

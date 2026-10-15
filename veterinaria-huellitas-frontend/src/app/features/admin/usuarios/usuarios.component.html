@@ -1,0 +1,86 @@
+<div class="page-head row">
+  <div>
+    <h1>Usuarios</h1>
+    <p>Los clientes se registran desde la página de registro. Aquí puedes editarlos o eliminarlos.</p>
+  </div>
+  <input class="f-field buscar" type="search" placeholder="Buscar por nombre o correo…" [value]="busqueda()"
+         (input)="busqueda.set($any($event.target).value)">
+</div>
+
+<div class="card">
+  @if (cargando()) {
+    <p class="muted">Cargando…</p>
+  } @else if (visibles().length === 0) {
+    <div class="empty"><img src="images/1.2.png" alt=""><p>No se encontraron usuarios.</p></div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th></th></tr></thead>
+        <tbody>
+          @for (u of visibles(); track u.id) {
+            <tr>
+              <td><strong>{{ u.nombreCompleto }}</strong>@if (u.email === miEmail) { <span class="muted"> (tú)</span> }</td>
+              <td>{{ u.email }}</td>
+              <td><span [class]="'badge ' + u.rol">{{ u.rol }}</span></td>
+              <td class="actions">
+                <button type="button" class="pill-btn sm ghost" (click)="abrirEditar(u)">EDITAR</button>
+                <button type="button" class="pill-btn sm danger" [disabled]="u.email === miEmail" (click)="aEliminar.set(u)">ELIMINAR</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (editando()) {
+  <div class="modal-backdrop" (click)="editando.set(null)">
+    <form class="modal" [formGroup]="form" (ngSubmit)="guardar()" (click)="$event.stopPropagation()" novalidate>
+      <h2>Editar usuario</h2>
+      <p class="modal-sub">Deja la contraseña vacía para mantener la actual.</p>
+
+      <label class="f-label" for="u-nombre">NOMBRE COMPLETO</label>
+      <input id="u-nombre" class="f-field" formControlName="nombreCompleto" [class.invalid]="f.nombreCompleto.invalid && f.nombreCompleto.touched">
+      <div class="f-error">{{ f.nombreCompleto.invalid && f.nombreCompleto.touched ? 'El nombre es obligatorio' : '' }}</div>
+
+      <label class="f-label" for="u-email">CORREO</label>
+      <input id="u-email" class="f-field" type="email" formControlName="email" [class.invalid]="f.email.invalid && f.email.touched">
+      <div class="f-error">{{ f.email.invalid && f.email.touched ? 'Ingresa un correo válido' : '' }}</div>
+
+      <div class="form-grid">
+        <div>
+          <label class="f-label" for="u-pass">NUEVA CONTRASEÑA</label>
+          <input id="u-pass" class="f-field" type="password" autocomplete="new-password" formControlName="password"
+                 [class.invalid]="f.password.invalid && f.password.touched">
+          <div class="f-error">{{ f.password.invalid && f.password.touched ? 'Mínimo 6 caracteres' : '' }}</div>
+        </div>
+        <div>
+          <label class="f-label" for="u-rol">ROL</label>
+          <select id="u-rol" class="f-field" formControlName="rol">
+            <option value="CLIENTE">CLIENTE</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="pill-btn sm ghost" (click)="editando.set(null)">CANCELAR</button>
+        <button type="submit" class="pill-btn sm" [disabled]="guardando()">{{ guardando() ? 'GUARDANDO…' : 'GUARDAR' }}</button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (aEliminar(); as u) {
+  <div class="modal-backdrop" (click)="aEliminar.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>¿Eliminar usuario?</h2>
+      <p class="modal-sub">Se eliminará a <strong>{{ u.nombreCompleto }}</strong> ({{ u.email }}).</p>
+      <div class="modal-actions">
+        <button type="button" class="pill-btn sm ghost" (click)="aEliminar.set(null)">VOLVER</button>
+        <button type="button" class="pill-btn sm danger" (click)="eliminar()">SÍ, ELIMINAR</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,71 @@
+<div class="page-head row">
+  <div>
+    <h1>Mis citas</h1>
+    <p>Puedes cancelar una cita hasta 24 horas antes de la hora programada.</p>
+  </div>
+  <a class="pill-btn sm" routerLink="/cliente/reservar">+ NUEVA CITA</a>
+</div>
+
+<div class="chips">
+  @for (f of filtros; track f.valor) {
+    <button type="button" class="chip" [class.active]="filtro() === f.valor" (click)="filtro.set(f.valor)">
+      {{ f.texto }}
+    </button>
+  }
+</div>
+
+<div class="card">
+  @if (cargando()) {
+    <p class="muted">Cargando…</p>
+  } @else if (visibles().length === 0) {
+    <div class="empty">
+      <img src="images/1.2.png" alt="">
+      <p>No hay citas para mostrar.</p>
+      <a class="pill-btn sm" routerLink="/cliente/reservar">Reservar cita</a>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Fecha</th><th>Hora</th><th>Mascota</th><th>Servicio</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (r of visibles(); track r.id) {
+            <tr>
+              <td>{{ fecha(r.fechaHora) }}</td>
+              <td>{{ hora(r.fechaHora) }} – {{ hora(r.fechaHoraFin) }}</td>
+              <td><strong>{{ r.nombreMascota }}</strong>@if (r.observaciones) { <div class="muted">{{ r.observaciones }}</div> }</td>
+              <td>{{ r.servicioNombre }}</td>
+              <td><span class="badge" [class]="'badge ' + r.estado">{{ r.estado }}</span></td>
+              <td class="actions">
+                @if (r.estado === 'CONFIRMADA') {
+                  <button type="button" class="pill-btn sm danger" [disabled]="!puedeCancelar(r)"
+                          [title]="puedeCancelar(r) ? 'Cancelar esta cita' : motivoNoCancelable(r)"
+                          (click)="aCancelar.set(r)">CANCELAR</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (aCancelar(); as r) {
+  <div class="modal-backdrop" (click)="aCancelar.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>¿Cancelar esta cita?</h2>
+      <p class="modal-sub">
+        {{ r.servicioNombre }} para <strong>{{ r.nombreMascota }}</strong><br>
+        {{ fecha(r.fechaHora) }} · {{ hora(r.fechaHora) }}
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="pill-btn sm ghost" (click)="aCancelar.set(null)">VOLVER</button>
+        <button type="button" class="pill-btn sm danger" [disabled]="cancelando()" (click)="confirmarCancelacion()">
+          {{ cancelando() ? 'CANCELANDO…' : 'SÍ, CANCELAR' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

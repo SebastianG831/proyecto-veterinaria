@@ -51,6 +51,23 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getRol(): string | null {
+    return localStorage.getItem('rol');
+  }
+
+  getNombre(): string {
+    return localStorage.getItem('nombreCompleto') ?? '';
+  }
+
+  getEmail(): string {
+    return localStorage.getItem('email') ?? '';
+  }
+
+  /** Ruta de inicio según el rol: el administrador tiene su propio panel. */
+  homePath(): string {
+    return this.getRol() === 'ADMIN' ? '/admin/inicio' : '/cliente/inicio';
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('email');

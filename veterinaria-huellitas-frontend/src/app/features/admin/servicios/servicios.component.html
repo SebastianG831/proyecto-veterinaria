@@ -1,0 +1,85 @@
+<div class="page-head row">
+  <div>
+    <h1>Servicios</h1>
+    <p>Crea, edita o desactiva los servicios que ofrece la veterinaria.</p>
+  </div>
+  <button type="button" class="pill-btn sm" (click)="abrirNuevo()">+ NUEVO SERVICIO</button>
+</div>
+
+<div class="card">
+  @if (cargando()) {
+    <p class="muted">Cargando…</p>
+  } @else if (servicios().length === 0) {
+    <div class="empty"><img src="images/1.2.png" alt=""><p>No hay servicios activos.</p></div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Servicio</th><th>Descripción</th><th>Precio</th><th>Duración</th><th></th></tr></thead>
+        <tbody>
+          @for (s of servicios(); track s.id) {
+            <tr>
+              <td><strong>{{ s.nombre }}</strong></td>
+              <td class="muted desc">{{ s.descripcion || '—' }}</td>
+              <td>S/ {{ s.precio }}</td>
+              <td>{{ s.duracionMinutos }} min</td>
+              <td class="actions">
+                <button type="button" class="pill-btn sm ghost" (click)="abrirEditar(s)">EDITAR</button>
+                <button type="button" class="pill-btn sm danger" (click)="aEliminar.set(s)">ELIMINAR</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (editando()) {
+  <div class="modal-backdrop" (click)="cerrar()">
+    <form class="modal" [formGroup]="form" (ngSubmit)="guardar()" (click)="$event.stopPropagation()" novalidate>
+      <h2>{{ editando() === 'nuevo' ? 'Nuevo servicio' : 'Editar servicio' }}</h2>
+      <p class="modal-sub">Completa los datos del servicio.</p>
+
+      <label class="f-label" for="nombre">NOMBRE</label>
+      <input id="nombre" class="f-field" formControlName="nombre" [class.invalid]="f.nombre.invalid && f.nombre.touched">
+      <div class="f-error">{{ f.nombre.invalid && f.nombre.touched ? 'El nombre es obligatorio' : '' }}</div>
+
+      <label class="f-label" for="descripcion">DESCRIPCIÓN</label>
+      <textarea id="descripcion" class="f-field" formControlName="descripcion" maxlength="500"></textarea>
+      <div class="f-error"></div>
+
+      <div class="form-grid">
+        <div>
+          <label class="f-label" for="precio">PRECIO (S/)</label>
+          <input id="precio" class="f-field" type="number" step="0.01" min="0.01" formControlName="precio"
+                 [class.invalid]="f.precio.invalid && f.precio.touched">
+          <div class="f-error">{{ f.precio.invalid && f.precio.touched ? 'Debe ser mayor a 0' : '' }}</div>
+        </div>
+        <div>
+          <label class="f-label" for="duracion">DURACIÓN (MIN)</label>
+          <input id="duracion" class="f-field" type="number" min="5" max="480" formControlName="duracionMinutos"
+                 [class.invalid]="f.duracionMinutos.invalid && f.duracionMinutos.touched">
+          <div class="f-error">{{ f.duracionMinutos.invalid && f.duracionMinutos.touched ? 'Entre 5 y 480 minutos' : '' }}</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="pill-btn sm ghost" (click)="cerrar()">CANCELAR</button>
+        <button type="submit" class="pill-btn sm" [disabled]="guardando()">{{ guardando() ? 'GUARDANDO…' : 'GUARDAR' }}</button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (aEliminar(); as s) {
+  <div class="modal-backdrop" (click)="aEliminar.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>¿Eliminar servicio?</h2>
+      <p class="modal-sub">«{{ s.nombre }}» dejará de mostrarse a los clientes. Las reservas anteriores se conservan.</p>
+      <div class="modal-actions">
+        <button type="button" class="pill-btn sm ghost" (click)="aEliminar.set(null)">VOLVER</button>
+        <button type="button" class="pill-btn sm danger" (click)="eliminar()">SÍ, ELIMINAR</button>
+      </div>
+    </div>
+  </div>
+}
